@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.13.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.0/firebase-firestore-compat.js"></script>
 <style>
   :root{
@@ -226,7 +227,8 @@ const SECTIONS = [
     {key:'gender', label:'الجنس', type:'select', options:['ذكر','أنثى'], required:true},
     {key:'nationality', label:'الجنسية', type:'text', required:true},
   ]},
-  { id:'s2', title:'بيانات الأم', fields:[
+  { id:'s2', title:'بيانات الأبوين', fields:[
+    {key:'orphanStatus', label:'حالة فقدان الأبوين', type:'select', options:['غير فاقد','فاقد الأب','فاقد الأم','فاقد الأبوين']},
     {key:'motherName', label:'اسم الأم', type:'text', required:true},
     {key:'motherFather', label:'اسم والد الأم', type:'text'},
     {key:'motherGrandfather', label:'اسم جد الأم', type:'text'},
@@ -292,10 +294,10 @@ const ALL_FIELDS = [
   ...SECTIONS.flatMap(s=>s.fields)
 ];
 const GRADES = ['الأول متوسط','الثاني متوسط','الثالث متوسط','الرابع إعدادي','الخامس إعدادي','السادس إعدادي'];
-const CLASS_SECTIONS = ['أ','ب','ج','د','هـ','و','ز'];
-const ADMIN_USER = 'ahmed';
-const ADMIN_PASS = '6578';
+const CLASS_SECTIONS = ['أ','ب','ج','د','هـ','و','ز','ح'];
 const LS_KEY = 'nb_school_requests_v1';
+const ADMIN_EMAIL = 'drfyjgujj6799@gmail.com'; // إيميل المدير (غيّره إذا مختلف)
+const ADMIN_EMAIL_KEY = 'nb_admin_email_for_signin';
 
 /* ================= إعدادات Firebase =================
    ضع هنا بيانات مشروعك من Firebase Console:
@@ -319,6 +321,7 @@ let state = {
   editingId:null,
   isAdmin:false,
   adminError:'',
+  adminInfo:'',
   requests:[],
   filtered:null,
   successReqNumber:'',
@@ -326,7 +329,7 @@ let state = {
   viewingRequest:null,
 };
 
-let db=null, downloads=null;
+let db=null, auth=null, downloads=null;
 const Store = {
   mode:'pending',
   async init(){
@@ -335,6 +338,7 @@ const Store = {
       if(configReady && typeof firebase !== 'undefined'){
         if(!firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
         db = firebase.firestore();
+        auth = firebase.auth();
       }
     }catch(e){ db=null; }
     try{
@@ -402,7 +406,7 @@ async function generateRequestNumber(){
   for(let i=0;i<8;i++){
     const rand = Math.floor(100000 + Math.random()*900000);
     const candidate = 'NB-'+year+'-'+rand;
-    const taken = await Store.exists(candidate);
+    const taken = (Store.mode==='db' && !state.isAdmin) ? false : await Store.exists(candidate);
     if(!taken) return candidate;
   }
   return 'NB-'+year+'-'+Date.now();
@@ -575,17 +579,14 @@ function renderAdminLogin(){
   <div class="card login-form">
     <h2 style="text-align:center">دخول مدير النظام</h2>
     ${state.adminError ? `<div class="error-box">${escapeHtml(state.adminError)}</div>` : ''}
-    <div class="field" style="margin-bottom:14px;">
-      <span>اسم المستخدم</span>
-      <input type="text" id="admin-user-input" autocomplete="username">
-    </div>
+    ${state.adminInfo ? `<div class="error-box" style="background:var(--accent-soft);color:var(--text);border-color:var(--accent);">${escapeHtml(state.adminInfo)}</div>` : ''}
     <div class="field" style="margin-bottom:20px;">
-      <span>كلمة المرور</span>
-      <input type="password" id="admin-pass-input" autocomplete="current-password">
+      <span>البريد الإلكتروني</span>
+      <input type="email" id="admin-user-input" autocomplete="username" dir="ltr">
     </div>
     <div class="actions-row">
       <button class="btn btn-ghost" data-action="go-login">رجوع</button>
-      <button class="btn btn-primary" data-action="admin-login-submit">دخول</button>
+      <button class="btn btn-primary" data-action="admin-login-submit">إرسال رابط الدخول</button>
     </div>
   </div>`;
 }
@@ -709,12 +710,14 @@ async function onAppClick(e){
     state.formData.section = section; state.studentStep = 0; state.formError=''; state.screen='student-form'; render();
   }
   else if(action==='go-admin-login'){
-    state.adminError=''; state.screen='admin-login'; render();
+    state.adminError=''; state.adminInfo=''; state.screen='admin-login'; render();
   }
   else if(action==='go-login'){
+    if(auth) auth.signOut().catch(()=>{});
     state.isAdmin=false; state.screen='login'; state.formData={}; render();
   }
   else if(action==='logout'){
+    if(auth) auth.signOut().catch(()=>{});
     state.isAdmin=false; state.screen='login'; render();
   }
   else if(action==='student-prev'){
@@ -754,22 +757,25 @@ async function onAppClick(e){
     }catch(err){}
   }
   else if(action==='admin-login-submit'){
-    const u = document.getElementById('admin-user-input').value.trim();
-    const p = document.getElementById('admin-pass-input').value.trim();
-    if(u===ADMIN_USER && p===ADMIN_PASS){
-      state.isAdmin=true; state.adminError='';
+    const u = document.getElementById('admin-user-input').value.trim().toLowerCase();
+    state.adminError=''; state.adminInfo='';
+    if(!auth){
+      state.adminError='نظام تسجيل الدخول غير متاح';
+    } else if(u !== ADMIN_EMAIL.toLowerCase()){
+      state.adminError='هذا البريد غير مصرّح له بالدخول';
+    } else {
       setBusy(true);
       try{
-        state.requests = await Store.listRequests();
-        state.filtered = null;
-        state.screen='admin-dashboard';
+        await auth.sendSignInLinkToEmail(u, {
+          url: location.origin + location.pathname,
+          handleCodeInApp: true
+        });
+        try{ localStorage.setItem(ADMIN_EMAIL_KEY, u); }catch(e){}
+        state.adminInfo='تم إرسال رابط الدخول إلى بريدك. افتحه من نفس الجهاز (وتأكد من مجلد Spam).';
       }catch(err){
-        state.adminError='تعذر تحميل الطلبات: '+(err&&err.message?err.message:'خطأ');
-        state.screen='admin-login';
+        state.adminError='تعذر إرسال الرابط: '+(err&&err.message?err.message:'خطأ');
       }
       setBusy(false);
-    } else {
-      state.adminError='اسم المستخدم أو كلمة المرور غير صحيحة';
     }
     render();
   }
@@ -887,6 +893,25 @@ async function exportToExcel(list){
 (async function boot(){
   await Store.init();
   state.screen='login';
+  if(auth && auth.isSignInWithEmailLink(location.href)){
+    let email = '';
+    try{ email = localStorage.getItem(ADMIN_EMAIL_KEY) || ''; }catch(e){}
+    if(!email) email = (window.prompt('اكتب بريدك الإلكتروني لتأكيد الدخول:') || '').trim().toLowerCase();
+    try{
+      if(email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) throw new Error('بريد غير مصرّح');
+      await auth.signInWithEmailLink(email, location.href);
+      try{ localStorage.removeItem(ADMIN_EMAIL_KEY); }catch(e){}
+      history.replaceState(null, '', location.origin + location.pathname);
+      state.isAdmin = true;
+      state.requests = await Store.listRequests();
+      state.filtered = null;
+      state.screen = 'admin-dashboard';
+    }catch(err){
+      history.replaceState(null, '', location.origin + location.pathname);
+      state.adminError = 'تعذر تسجيل الدخول: ' + (err && err.message ? err.message : 'خطأ');
+      state.screen = 'admin-login';
+    }
+  }
   render();
 })();
 </script>
