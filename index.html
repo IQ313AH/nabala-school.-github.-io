@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ثانوية النبلاء النموذجية | استمارة القبول</title>
+<title>ثانوية النبلاء النموذجية | معلومات الطلاب EMIS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
@@ -13,16 +13,16 @@
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.0/firebase-firestore-compat.js"></script>
 <style>
   :root{
-    --bg:#FAF7F0;
+    --bg:#F6F5F0;
     --surface:#FFFFFF;
-    --surface-2:#F1EDE1;
-    --primary:#1B4332;
-    --primary-light:#2D6A4F;
-    --accent:#B98900;
-    --accent-soft:#F3E4B8;
-    --text:#20241F;
-    --text-muted:#63705F;
-    --border:#E1DACB;
+    --surface-2:#ECEFF8;
+    --primary:#14214F;
+    --primary-light:#2A3F8F;
+    --accent:#B8902B;
+    --accent-soft:#F5EACB;
+    --text:#151B33;
+    --text-muted:#5A6385;
+    --border:#D9DDEB;
     --danger:#A6362C;
     --radius:12px;
     --font-display:'Cairo', 'Tahoma', sans-serif;
@@ -30,30 +30,30 @@
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#12211A;
-      --surface:#183226;
-      --surface-2:#1E3A2C;
-      --primary:#5FAE86;
-      --primary-light:#7FC49E;
-      --accent:#E0B84C;
-      --accent-soft:#33301B;
-      --text:#EDF3EC;
-      --text-muted:#A9BAAE;
-      --border:#2C4536;
+      --bg:#0A1030;
+      --surface:#111A42;
+      --surface-2:#18235A;
+      --primary:#9DB0F0;
+      --primary-light:#B7C5F6;
+      --accent:#E3BE5E;
+      --accent-soft:#352F1C;
+      --text:#EEF0FA;
+      --text-muted:#A9B2D4;
+      --border:#27336B;
       --danger:#E28479;
     }
   }
   :root[data-theme="dark"]{
-    --bg:#12211A;
-    --surface:#183226;
-    --surface-2:#1E3A2C;
-    --primary:#5FAE86;
-    --primary-light:#7FC49E;
-    --accent:#E0B84C;
-    --accent-soft:#33301B;
-    --text:#EDF3EC;
-    --text-muted:#A9BAAE;
-    --border:#2C4536;
+    --bg:#0A1030;
+    --surface:#111A42;
+    --surface-2:#18235A;
+    --primary:#9DB0F0;
+    --primary-light:#B7C5F6;
+    --accent:#E3BE5E;
+    --accent-soft:#352F1C;
+    --text:#EEF0FA;
+    --text-muted:#A9B2D4;
+    --border:#27336B;
     --danger:#E28479;
   }
   *{box-sizing:border-box;}
@@ -207,6 +207,59 @@
 
   .login-form{max-width:380px;margin:0 auto;}
   .footnote{text-align:center;color:var(--text-muted);font-size:12px;margin-top:26px;}
+
+  /* ===== EMIS ===== */
+  body.emis #app{max-width:1180px;}
+  .emis-head{background:linear-gradient(135deg,var(--primary) 0%,#0A1236 100%);color:#fff;border-radius:18px;padding:20px 22px;margin-bottom:18px;position:relative;overflow:hidden;border-bottom:4px solid var(--accent);}
+  .emis-head::after{content:"EMIS";position:absolute;left:14px;bottom:-22px;font:800 90px/1 var(--font-display);opacity:.07;letter-spacing:4px;direction:ltr;}
+  .emis-head .row1{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .emis-head .crest{width:54px;height:54px;border-radius:50%;background:var(--accent-soft);color:#14214F;display:flex;align-items:center;justify-content:center;font:800 24px var(--font-display);border:3px solid var(--accent);flex:none;}
+  .emis-head .who{display:flex;gap:14px;align-items:center;}
+  .emis-head h1{margin:0;font-size:21px;color:#fff;}
+  .emis-head .school{font-size:14px;color:#E8CF85;margin-top:2px;}
+  .emis-head .admin{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 14px;}
+  .emis-head .admin .av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#241C00;display:flex;align-items:center;justify-content:center;font:800 15px var(--font-display);}
+  .emis-head .admin small{display:block;font-size:11px;color:#C9D2F0;}
+  .emis-head .admin strong{font-size:14px;}
+  .emis-head .btn-out{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:var(--font-body);}
+  .emis-tabs{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap;}
+  .emis-tabs span{font-size:13px;padding:6px 14px;border-radius:99px;background:rgba(255,255,255,.08);color:#C9D2F0;}
+  .emis-tabs span.on{background:var(--accent);color:#241C00;font-weight:700;}
+  .stat-card{position:relative;text-align:right;border-right:4px solid var(--accent);}
+  .stats-row.four{grid-template-columns:repeat(4,1fr);}
+  @media (max-width:700px){.stats-row.four{grid-template-columns:1fr 1fr;}}
+  .filters{display:grid;grid-template-columns:1.4fr 1.2fr 1fr 1fr auto auto;gap:10px;margin-bottom:16px;}
+  @media (max-width:900px){.filters{grid-template-columns:1fr 1fr;}}
+  .filters input,.filters select{font-family:var(--font-body);padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);}
+  .avatar{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--primary);align-items:center;justify-content:center;font:700 13px var(--font-display);margin-left:8px;vertical-align:middle;}
+  .pill{font-size:11.5px;padding:2px 10px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border);}
+  .pill.m{color:#1D5E9B;} .pill.f{color:#A23A7B;}
+  tbody tr:hover{background:var(--surface-2);}
+  .count-note{font-size:12.5px;color:var(--text-muted);margin:0 0 10px;}
+
+  /* ===== Gold & Indigo refinements ===== */
+  .emis-head{background:linear-gradient(135deg,#1B2A66 0%,#0A1236 100%);box-shadow:0 10px 30px rgba(10,18,54,.25);border-bottom:0;}
+  .emis-head::before{content:"";position:absolute;inset:auto 0 0 0;height:4px;background:linear-gradient(90deg,#8A6A1B,#E8CF85,#B8902B,#E8CF85,#8A6A1B);}
+  .emis-head .crest{background:linear-gradient(145deg,#F2DC95,#B8902B);color:#0A1236;border:2px solid #F7E9B8;box-shadow:0 4px 14px rgba(0,0,0,.3);}
+  .emis-head h1{letter-spacing:.2px;}
+  .emis-head .school{color:#E8CF85;font-weight:600;}
+  .emis-head .admin{background:rgba(232,207,133,.1);border-color:rgba(232,207,133,.35);}
+  .emis-head .admin .av{background:linear-gradient(145deg,#F2DC95,#B8902B);color:#0A1236;}
+  .emis-tabs span.on{background:linear-gradient(145deg,#F2DC95,#B8902B);color:#0A1236;}
+  .emis-head .btn-out:hover{background:rgba(232,207,133,.18);border-color:#E8CF85;}
+  .btn-primary{background:linear-gradient(135deg,#2A3F8F,#14214F);color:#fff;}
+  .btn-primary:hover{background:linear-gradient(135deg,#3550B0,#1B2A66);}
+  .btn-gold{background:linear-gradient(145deg,#F2DC95,#B8902B);color:#0A1236;font-weight:700;}
+  .card{box-shadow:0 2px 14px rgba(20,33,79,.06);}
+  .stat-card{background:var(--surface);box-shadow:0 2px 10px rgba(20,33,79,.06);}
+  .stat-card .num{color:var(--primary);}
+  th{background:#14214F;color:#E8CF85;border-bottom:2px solid #B8902B;}
+  :root[data-theme="dark"] th{background:#18235A;}
+  tbody tr:nth-child(even){background:rgba(20,33,79,.025);}
+  tbody tr:hover{background:var(--accent-soft);}
+  .avatar{background:#14214F;color:#E8CF85;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(184,144,43,.22);}
+  .hero h1{color:var(--primary);}
 </style>
 </head>
 <body>
@@ -442,26 +495,28 @@ function renderLoading(){
   return '<div class="hero"><h1>جارٍ تحميل النظام...</h1><p>ثانوية النبلاء النموذجية</p></div>';
 }
 
+const SCHOOL_NAME='ثانوية النبلاء النموذجية';
+const ADMIN_NAME='أحمد عقيل جاسم';
 function topbar(withLogout){
-  return `<div class="topbar">
-    <div class="brand">
-      <div class="crest">ن</div>
-      <div class="titles">
-        <strong>ثانوية النبلاء النموذجية</strong>
-        <span>نظام استمارات القبول الإلكتروني</span>
-      </div>
+  document.body.classList.toggle('emis', !!withLogout);
+  return `<div class="emis-head">
+    <div class="row1">
+      <div class="who"><div class="crest">ن</div>
+        <div><h1>معلومات الطلاب EMIS</h1><div class="school">${SCHOOL_NAME}</div></div></div>
+      <div class="admin"><div class="av">أ</div>
+        <div><small>مسؤول النظام</small><strong>${ADMIN_NAME}</strong></div>
+        ${withLogout ? '<button class="btn-out" data-action="logout">خروج</button>' : ''}</div>
     </div>
-    ${Store.mode==='local' ? '<span class="badge-local">تخزين محلي تجريبي</span>' : ''}
-    ${withLogout ? '<button class="btn btn-ghost" data-action="logout">تسجيل الخروج</button>' : ''}
+    ${withLogout ? '<div class="emis-tabs"><span class="on">بيانات الطلاب</span><span>الصفوف والشعب</span><span>التقارير</span></div>' : ''}
+    ${(!withLogout && Store.mode==='local') ? '<div style="margin-top:10px"><span class="badge-local">تخزين محلي تجريبي</span></div>' : ''}
   </div>`;
 }
-
 function renderLogin(){
   return `
   ${topbar(false)}
   <div class="hero">
-    <h1>مرحباً بكم في بوابة القبول</h1>
-    <p>اختر طريقة الدخول للمتابعة</p>
+    <h1>مرحباً بكم في معلومات الطلاب EMIS</h1>
+    <p>${SCHOOL_NAME} — اختر طريقة الدخول للمتابعة</p>
     <div class="choice-grid">
       <div class="choice-card" data-action="go-student">
         <span class="ico">🎓</span>
@@ -475,7 +530,7 @@ function renderLogin(){
       </div>
     </div>
   </div>
-  <p class="footnote">جميع الحقوق محفوظة لثانوية النبلاء النموذجية</p>`;
+  <p class="footnote">نظام EMIS — ${SCHOOL_NAME} — مسؤول النظام: ${ADMIN_NAME}</p>`;
 }
 
 function renderStudentGrade(){
@@ -597,15 +652,21 @@ function getFilteredList(){
 
 function renderAdminDashboard(){
   const list = getFilteredList();
+  const all = state.requests;
   const today = new Date(); today.setHours(0,0,0,0);
-  const todayCount = state.requests.filter(r=>r.submittedAt && r.submittedAt >= today.getTime()).length;
-  const rows = list.map(r=>`
+  const todayCount = all.filter(r=>r.submittedAt && r.submittedAt >= today.getTime()).length;
+  const males = all.filter(r=>r.gender==='ذكر').length, females = all.filter(r=>r.gender==='أنثى').length;
+  const fq = state.fGrade||'', fs = state.fSec||'';
+  const opt=(arr,v)=>arr.map(x=>`<option ${x===v?'selected':''}>${escapeHtml(x)}</option>`).join('');
+  const rows = list.map((r,i)=>`
     <tr>
-      <td>${escapeHtml(r.id)}</td>
-      <td>${escapeHtml(fullName(r))}</td>
-      <td>${escapeHtml(r.grade||'-')}</td>
-      <td>${escapeHtml(r.section||'-')}</td>
+      <td>${i+1}</td>
+      <td><span class="avatar">${escapeHtml((r.name||'؟').charAt(0))}</span>${escapeHtml(fullName(r))}</td>
       <td>${escapeHtml(r.statisticalNumber||'-')}</td>
+      <td>${escapeHtml(r.grade||'-')} / ${escapeHtml(r.section||'-')}</td>
+      <td><span class="pill ${r.gender==='ذكر'?'m':'f'}">${escapeHtml(r.gender||'-')}</span></td>
+      <td>${escapeHtml(r.birthDate||'-')}</td>
+      <td dir="ltr" style="text-align:right">${escapeHtml(r.phone||'-')}</td>
       <td>${r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('ar-EG') : '-'}</td>
       <td class="row-actions">
         <button class="btn btn-outline btn-sm" data-action="view-request" data-id="${escapeHtml(r.id)}">عرض</button>
@@ -616,33 +677,36 @@ function renderAdminDashboard(){
   return `
   ${topbar(true)}
   ${state.adminError ? `<div class="error-box">${escapeHtml(state.adminError)}</div>` : ''}
-  <div class="stats-row">
-    <div class="stat-card"><div class="num">${state.requests.length}</div><div class="lbl">إجمالي الطلبات</div></div>
-    <div class="stat-card"><div class="num">${todayCount}</div><div class="lbl">طلبات اليوم</div></div>
-    <div class="stat-card"><div class="num">${list.length}</div><div class="lbl">نتائج العرض الحالي</div></div>
-  </div>
-  <div class="toolbar">
-    <button class="btn btn-primary" data-action="admin-add-new">+ إضافة طلب جديد</button>
-    <button class="btn btn-gold" data-action="admin-export-excel">تصدير إلى إكسل</button>
-    <button class="btn btn-outline" data-action="admin-refresh">تحديث القائمة</button>
+  <div class="stats-row four">
+    <div class="stat-card"><div class="num">${all.length}</div><div class="lbl">إجمالي الطلاب</div></div>
+    <div class="stat-card"><div class="num">${males}</div><div class="lbl">ذكور</div></div>
+    <div class="stat-card"><div class="num">${females}</div><div class="lbl">إناث</div></div>
+    <div class="stat-card"><div class="num">${todayCount}</div><div class="lbl">مسجّلون اليوم</div></div>
   </div>
   <div class="card">
-    <h2 style="font-size:16px;">البحث في الطلبات</h2>
-    <div class="search-row">
-      <input type="text" id="search-name-input" placeholder="ابحث بالاسم الكامل">
-      <input type="text" id="search-stat-input" placeholder="ابحث بالرقم الإحصائي (رقم الهوية)">
+    <h2 style="font-size:17px;">سجل بيانات الطلاب</h2>
+    <div class="filters">
+      <input type="text" id="search-name-input" placeholder="بحث بالاسم الكامل">
+      <input type="text" id="search-stat-input" placeholder="الرقم الإحصائي">
+      <select id="f-grade"><option value="">كل الصفوف</option>${opt(GRADES,fq)}</select>
+      <select id="f-sec"><option value="">كل الشعب</option>${opt(CLASS_SECTIONS,fs)}</select>
       <button class="btn btn-primary btn-sm" data-action="do-search">بحث</button>
       <button class="btn btn-ghost btn-sm" data-action="reset-search">إظهار الكل</button>
     </div>
+    <div class="toolbar">
+      <button class="btn btn-primary btn-sm" data-action="admin-add-new">+ إضافة طالب</button>
+      <button class="btn btn-gold btn-sm" data-action="admin-export-excel">تصدير إلى إكسل</button>
+      <button class="btn btn-outline btn-sm" data-action="admin-refresh">تحديث</button>
+    </div>
+    <p class="count-note">عدد النتائج: ${list.length}</p>
     ${list.length===0
-      ? '<div class="empty-state">لا توجد طلبات مطابقة حالياً</div>'
+      ? '<div class="empty-state">لا توجد بيانات طلاب مطابقة حالياً</div>'
       : `<div class="table-wrap"><table>
-          <thead><tr><th>رقم الطلب</th><th>الاسم الكامل</th><th>الصف</th><th>الشعبة</th><th>الرقم الإحصائي</th><th>تاريخ التقديم</th><th>إجراءات</th></tr></thead>
+          <thead><tr><th>#</th><th>اسم الطالب</th><th>الرقم الإحصائي</th><th>الصف / الشعبة</th><th>الجنس</th><th>تاريخ التولد</th><th>الهاتف</th><th>تاريخ التسجيل</th><th>إجراءات</th></tr></thead>
           <tbody>${rows}</tbody>
         </table></div>`}
   </div>`;
 }
-
 function renderAdminForm(){
   const sectionsHtml = SECTIONS.map(sec=>`
     <div class="section-block">
@@ -793,16 +857,17 @@ async function onAppClick(e){
   else if(action==='do-search'){
     const nameQ = document.getElementById('search-name-input').value.trim().toLowerCase();
     const statQ = document.getElementById('search-stat-input').value.trim().toLowerCase();
+    state.fGrade = document.getElementById('f-grade').value; state.fSec = document.getElementById('f-sec').value;
     state.filtered = state.requests.filter(r=>{
       const nameMatch = !nameQ || fullName(r).toLowerCase().includes(nameQ)
         || [r.fatherName,r.paternalGrandfather,r.paternalGreatGrandfather,r.lastName].filter(Boolean).join(' ').toLowerCase().includes(nameQ);
       const statMatch = !statQ || String(r.statisticalNumber||'').toLowerCase().includes(statQ);
-      return nameMatch && statMatch;
+      return nameMatch && statMatch && (!state.fGrade||r.grade===state.fGrade) && (!state.fSec||r.section===state.fSec);
     });
     render();
   }
   else if(action==='reset-search'){
-    state.filtered=null; render();
+    state.filtered=null; state.fGrade=''; state.fSec=''; render();
   }
   else if(action==='admin-add-new'){
     state.formMode='add'; state.formData={}; state.editingId=null; state.formError=''; state.screen='admin-form'; render();
